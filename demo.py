@@ -1,4 +1,5 @@
 #!python3
+#Using these code for Pycharm remote debug
 import pydevd_pycharm
 pydevd_pycharm.settrace('192.168.2.134', port=10010, stdoutToServer=True, stderrToServer=True)
 
@@ -55,6 +56,7 @@ class Demo:
         self.args = cmd
         model_saver = experiment.train.model_saver
         self.structure = experiment.structure
+        #set model readpath
         self.model_path = self.args['resume']
 
     def init_torch_tensor(self):
