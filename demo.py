@@ -8,6 +8,9 @@ from experiment import Structure, Experiment
 from concern.config import Configurable, Config
 import math
 
+import importlib.machinery
+print(importlib.machinery.all_suffixes())
+
 def main():
     parser = argparse.ArgumentParser(description='Text Recognition Training')
     parser.add_argument('exp', type=str)

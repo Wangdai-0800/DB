@@ -96,10 +96,15 @@ class SegDetectorRepresenter(Configurable):
                 box = self.unclip(points, unclip_ratio=2.0)
                 if len(box) > 1:
                     continue
+                # 针对空箱的情况做调整
+                if box.size == 0:
+                    continue
             else:
                 continue
             box = box.reshape(-1, 2)
+
             _, sside = self.get_mini_boxes(box.reshape((-1, 1, 2)))
+
             if sside < self.min_size + 2:
                 continue
 
@@ -168,6 +173,10 @@ class SegDetectorRepresenter(Configurable):
         return expanded
 
     def get_mini_boxes(self, contour):
+        print(contour)
+        print(contour.dtype)
+        #contour.astype(np.float32)
+
         bounding_box = cv2.minAreaRect(contour)
         points = sorted(list(cv2.boxPoints(bounding_box)), key=lambda x: x[0])
 
