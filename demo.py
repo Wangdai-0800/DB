@@ -1,4 +1,7 @@
 #!python3
+import pydevd_pycharm
+pydevd_pycharm.settrace('192.168.2.134', port=10010, stdoutToServer=True, stderrToServer=True)
+
 import argparse
 import os
 import torch
@@ -7,13 +10,11 @@ import numpy as np
 from experiment import Structure, Experiment
 from concern.config import Configurable, Config
 import math
-
-import importlib.machinery
-print(importlib.machinery.all_suffixes())
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 def main():
     parser = argparse.ArgumentParser(description='Text Recognition Training')
-    parser.add_argument('exp', type=str)
+    parser.add_argument('--exp', type=str)
     parser.add_argument('--resume', type=str, help='Resume from checkpoint')
     parser.add_argument('--image_path', type=str, help='image path')
     parser.add_argument('--result_dir', type=str, default='./demo_results/', help='path to save results')
