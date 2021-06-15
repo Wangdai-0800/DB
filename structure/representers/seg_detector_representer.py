@@ -84,34 +84,36 @@ class SegDetectorRepresenter(Configurable):
             approx = cv2.approxPolyDP(contour, epsilon, True)
             points = approx.reshape((-1, 2))
             if points.shape[0] < 4:
+                #ignore small patch
                 continue
             # _, sside = self.get_mini_boxes(contour)
             # if sside < self.min_size:
             #     continue
             score = self.box_score_fast(pred, points.reshape(-1, 2))
             if self.box_thresh > score:
+                # More strictly reject a box with higher box_thresh(upbound 1)
                 continue
             
             if points.shape[0] > 2:
                 box = self.unclip(points, unclip_ratio=2.0)
                 if len(box) > 1:
                     continue
-                # 针对空箱的情况做调整
                 if box.size == 0:
+                    """ !!! A BUG HERE !!!"""
+                    """Unclip中的ploy生成有问题"""
                     continue
             else:
                 continue
             box = box.reshape(-1, 2)
-
             _, sside = self.get_mini_boxes(box.reshape((-1, 1, 2)))
-
             if sside < self.min_size + 2:
                 continue
 
             if not isinstance(dest_width, int):
                 dest_width = dest_width.item()
                 dest_height = dest_height.item()
-            
+
+            #location mapping: pred -> origin pic
             box[:, 0] = np.clip(
                 np.round(box[:, 0] / width * dest_width), 0, dest_width)
             box[:, 1] = np.clip(
@@ -165,6 +167,7 @@ class SegDetectorRepresenter(Configurable):
         return boxes, scores
 
     def unclip(self, box, unclip_ratio=1.5):
+        #Paper Page4 Vatti 1992
         poly = Polygon(box)
         distance = poly.area * unclip_ratio / poly.length
         offset = pyclipper.PyclipperOffset()
@@ -173,10 +176,6 @@ class SegDetectorRepresenter(Configurable):
         return expanded
 
     def get_mini_boxes(self, contour):
-        print(contour)
-        print(contour.dtype)
-        #contour.astype(np.float32)
-
         bounding_box = cv2.minAreaRect(contour)
         points = sorted(list(cv2.boxPoints(bounding_box)), key=lambda x: x[0])
 
@@ -199,6 +198,7 @@ class SegDetectorRepresenter(Configurable):
         return box, min(bounding_box[1])
 
     def box_score_fast(self, bitmap, _box):
+        #Calculating the mean Possibility of the box-circle
         h, w = bitmap.shape[:2]
         box = _box.copy()
         xmin = np.clip(np.floor(box[:, 0].min()).astype(np.int), 0, w - 1)

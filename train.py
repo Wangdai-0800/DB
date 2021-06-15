@@ -1,6 +1,11 @@
 #!python3
+import pydevd_pycharm
+pydevd_pycharm.settrace('192.168.2.134', port=10010, stdoutToServer=True, stderrToServer=True)
+
 import argparse
 import time
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 import torch
 import yaml
@@ -19,7 +24,7 @@ from concern.config import Configurable, Config
 
 def main():
     parser = argparse.ArgumentParser(description='Text Recognition Training')
-    parser.add_argument('exp', type=str)
+    parser.add_argument('--exp', type=str)
     parser.add_argument('--name', type=str)
     parser.add_argument('--batch_size', type=int, help='Batch size for training')
     parser.add_argument('--resume', type=str, help='Resume from checkpoint')

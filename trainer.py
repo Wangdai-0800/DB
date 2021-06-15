@@ -84,6 +84,7 @@ class Trainer:
 
                 self.train_step(model, optimizer, batch,
                                 epoch=epoch, step=self.steps)
+
                 if self.logger.verbose:
                     torch.cuda.synchronize()
                 self.logger.report_time('Forwarding ')
