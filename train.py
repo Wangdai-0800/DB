@@ -1,11 +1,11 @@
 #!python3
-import pydevd_pycharm
-pydevd_pycharm.settrace('192.168.2.134', port=10010, stdoutToServer=True, stderrToServer=True)
+#import pydevd_pycharm
+#pydevd_pycharm.settrace('192.168.2.134', port=10010, stdoutToServer=True, stderrToServer=True)
 
 import argparse
 import time
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 import torch
 import yaml

@@ -31,7 +31,7 @@ define:
             class: DataLoader
             dataset: ^train_data
             batch_size: 16
-            num_workers: 16
+            num_workers: 0
         checkpoint: 
             class: Checkpoint
             start_epoch: 0
@@ -73,5 +73,6 @@ define:
         verbose: true
         level: info
         log_interval: 450
+        database_dir: "/data/wd_DBnet_data/recorders/outputs/"
 
     evaluation: *validate

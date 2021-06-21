@@ -20,7 +20,8 @@ class Logger(Configurable):
     ARGS_FILE_NAME = 'args.log'
     METRICS_FILE_NAME = 'metrics.log'
 
-    database_dir = State(default='./outputs/')
+    #待优化，从yaml读入
+    database_dir = State(default='/data/wd_DBnet_data/recorders/outputs/')
     log_dir = State(default='workspace')
     verbose = State(default=False)
     level = State(default='info')
