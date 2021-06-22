@@ -28,7 +28,7 @@ class Hswish(nn.Module):
         super(Hswish, self).__init__()
         self.inplace = inplace
 
-    def forward(self, x):
+    def forward(self, x, **args):
         return x * F.relu6(x + 3., inplace=self.inplace) / 6.
 
 
@@ -37,7 +37,7 @@ class Hsigmoid(nn.Module):
         super(Hsigmoid, self).__init__()
         self.inplace = inplace
 
-    def forward(self, x):
+    def forward(self, x, **args):
         return F.relu6(x + 3., inplace=self.inplace) / 6.
 
 
@@ -53,7 +53,7 @@ class SEModule(nn.Module):
             # nn.Sigmoid()
         )
 
-    def forward(self, x):
+    def forward(self, x, **args):
         b, c, _, _ = x.size()
         y = self.avg_pool(x).view(b, c)
         y = self.fc(y).view(b, c, 1, 1)
@@ -64,7 +64,7 @@ class Identity(nn.Module):
     def __init__(self, channel):
         super(Identity, self).__init__()
 
-    def forward(self, x):
+    def forward(self, x, **args):
         return x
 
 
@@ -109,7 +109,7 @@ class MobileBottleneck(nn.Module):
             norm_layer(oup),
         )
 
-    def forward(self, x):
+    def forward(self, x, **args):
         if self.use_res_connect:
             return x + self.conv(x)
         else:
@@ -191,7 +191,8 @@ class MobileNetV3(nn.Module):
             raise NotImplementedError
 
         # make it nn.Sequential
-        #self.features = nn.Sequential(*self.features)  del for dbnet
+        #Delete for DBnet?
+        self.features = nn.Sequential(*self.features)
 
         # building classifier
         self.classifier = nn.Sequential(
@@ -201,11 +202,16 @@ class MobileNetV3(nn.Module):
 
         self._initialize_weights()
 
-    def forward(self, x):
+    def forward(self, x, **kargs):
         '''x = self.features(x)
         x = x.mean(3).mean(2)
         x = self.classifier(x)
         return x'''
+
+        # Here extract the hiddeng laryer result maybe is ralated
+        # to the operation in decoder
+        # But there are only 15 layers, so here change the range
+        # What for MobileNet v3 large???
         x2, x3, x4, x5 = None, None, None, None
         for stage in range(17): # https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.1/ppocr/modeling/backbones/det_mobilenet_v3.py
             x = self.features[stage](x)
@@ -215,7 +221,7 @@ class MobileNetV3(nn.Module):
                 x3 = x
             elif stage == 12:
                 x4 = x
-            elif stage == 16:
+            elif stage == 16:           #16
                 x5 = x
         return x2, x3, x4, x5
 

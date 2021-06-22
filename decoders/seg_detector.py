@@ -115,6 +115,7 @@ class SegDetector(nn.Module):
             return nn.ConvTranspose2d(in_channels, out_channels, 2, 2)
 
     def forward(self, features, gt=None, masks=None, training=False):
+        #这里对应mobilenetv3中抽出中间层的操作？
         c2, c3, c4, c5 = features
         in5 = self.in5(c5)
         in4 = self.in4(c4)

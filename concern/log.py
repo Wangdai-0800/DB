@@ -22,7 +22,7 @@ class Logger(Configurable):
 
     #待优化，从yaml读入
     database_dir = State(default='/data/wd_DBnet_data/recorders/outputs/')
-    log_dir = State(default='workspace')
+    log_dir = State(default='/data/wd_DBnet_data/recorders/outputs/workspace')
     verbose = State(default=False)
     level = State(default='info')
     log_interval = State(default=100)

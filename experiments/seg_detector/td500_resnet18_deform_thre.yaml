@@ -10,7 +10,7 @@ define:
             class: Builder
             model: SegDetectorModel
             model_args:
-                backbone: deformable_resnet18
+                backbone: resnet18
                 decoder: SegDetector
                 decoder_args: 
                     adaptive: True
@@ -31,7 +31,7 @@ define:
             class: DataLoader
             dataset: ^train_data
             batch_size: 16
-            num_workers: 16
+            num_workers: 0              #Original 16
         checkpoint: 
             class: Checkpoint
             start_epoch: 0
@@ -40,7 +40,7 @@ define:
         model_saver: 
             class: ModelSaver
             dir_path: model
-            save_interval: 18000
+            save_interval: 18000            #Maybe too large for saving
             signal_path: save
         scheduler: 
             class: OptimizerScheduler
@@ -51,8 +51,8 @@ define:
                 weight_decay: 0.0001
             learning_rate:  
                 class: DecayLearningRate
-                epochs: 1200
-        epochs: 1200
+                epochs: 600         #Original 1200
+        epochs: 600                 #Original 1200
 
     validation: &validate
         class: ValidationSettings
