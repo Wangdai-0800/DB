@@ -1,0 +1,76 @@
+Traceback (most recent call last):
+  File "showDemo.py", line 194, in <module>
+    diy_myMV3(modelPath, resultPath, box_thresh)
+TypeError: diy_myMV3() takes 2 positional arguments but 3 were given
+verbose: True
+Initializing log dir for /data/wd_DBnet_data/recorders/outputs/workspace/SegDetectorModel-seg_detector/mobilenet_v3_large/L1BalanceCELoss
+/data/wd_DBnet_data/origin_data/datasets/icdar2015/
+/data/wd_DBnet_data/origin_data/datasets/TD_TR/TD500/
+/data/wd_DBnet_data/origin_data/datasets/RCTW-17/
+/data/wd_DBnet_data/origin_data/datasets/MTWI/
+/data/wd_DBnet_data/origin_data/datasets/USTB1K/
+Resuming from /data/wd_DBnet_data/recorders/outputs/workspace/mv3_mixup_1500epochs_resume/model/model_epoch_59_minibatch_72000
+Resumed from /data/wd_DBnet_data/recorders/outputs/workspace/mv3_mixup_1500epochs_resume/model/model_epoch_59_minibatch_72000
+verbose: True
+Initializing log dir for /data/wd_DBnet_data/recorders/outputs/workspace/SegDetectorModel-seg_detector/mobilenet_v3_large/L1BalanceCELoss
+/data/wd_DBnet_data/origin_data/datasets/icdar2015/
+/data/wd_DBnet_data/origin_data/datasets/TD_TR/TD500/
+/data/wd_DBnet_data/origin_data/datasets/RCTW-17/
+/data/wd_DBnet_data/origin_data/datasets/MTWI/
+/data/wd_DBnet_data/origin_data/datasets/USTB1K/
+Resuming from /data/wd_DBnet_data/recorders/outputs/workspace/mv3_mixup_1500epochs_resume/model/model_epoch_59_minibatch_72000
+Resumed from /data/wd_DBnet_data/recorders/outputs/workspace/mv3_mixup_1500epochs_resume/model/model_epoch_59_minibatch_72000
+verbose: True
+Initializing log dir for /data/wd_DBnet_data/recorders/outputs/workspace/SegDetectorModel-seg_detector/mobilenet_v3_large/L1BalanceCELoss
+/data/wd_DBnet_data/origin_data/datasets/icdar2015/
+/data/wd_DBnet_data/origin_data/datasets/TD_TR/TD500/
+/data/wd_DBnet_data/origin_data/datasets/RCTW-17/
+/data/wd_DBnet_data/origin_data/datasets/MTWI/
+/data/wd_DBnet_data/origin_data/datasets/USTB1K/
+Resuming from /data/wd_DBnet_data/recorders/outputs/workspace/mv3_mixup_1500epochs_resume/model/model_epoch_59_minibatch_72000
+Resumed from /data/wd_DBnet_data/recorders/outputs/workspace/mv3_mixup_1500epochs_resume/model/model_epoch_59_minibatch_72000
+verbose: True
+Initializing log dir for /data/wd_DBnet_data/recorders/outputs/workspace/SegDetectorModel-seg_detector/mobilenet_v3_large/L1BalanceCELoss
+/data/wd_DBnet_data/origin_data/datasets/icdar2015/
+/data/wd_DBnet_data/origin_data/datasets/TD_TR/TD500/
+/data/wd_DBnet_data/origin_data/datasets/RCTW-17/
+/data/wd_DBnet_data/origin_data/datasets/MTWI/
+/data/wd_DBnet_data/origin_data/datasets/USTB1K/
+Resuming from /data/wd_DBnet_data/recorders/outputs/workspace/mv3_mixup_1500epochs_resume/model/model_epoch_59_minibatch_72000
+Resumed from /data/wd_DBnet_data/recorders/outputs/workspace/mv3_mixup_1500epochs_resume/model/model_epoch_59_minibatch_72000
+verbose: True
+Initializing log dir for /data/wd_DBnet_data/recorders/outputs/workspace/SegDetectorModel-seg_detector/mobilenet_v3_large/L1BalanceCELoss
+/data/wd_DBnet_data/origin_data/datasets/icdar2015/
+/data/wd_DBnet_data/origin_data/datasets/TD_TR/TD500/
+/data/wd_DBnet_data/origin_data/datasets/RCTW-17/
+/data/wd_DBnet_data/origin_data/datasets/MTWI/
+/data/wd_DBnet_data/origin_data/datasets/USTB1K/
+Resuming from /data/wd_DBnet_data/recorders/outputs/workspace/mv3_mixup_1500epochs_resume/model/model_epoch_59_minibatch_72000
+Resumed from /data/wd_DBnet_data/recorders/outputs/workspace/mv3_mixup_1500epochs_resume/model/model_epoch_59_minibatch_72000
+verbose: True
+Initializing log dir for /data/wd_DBnet_data/recorders/outputs/workspace/SegDetectorModel-seg_detector/mobilenet_v3_large/L1BalanceCELoss
+/data/wd_DBnet_data/origin_data/datasets/icdar2015/
+/data/wd_DBnet_data/origin_data/datasets/TD_TR/TD500/
+/data/wd_DBnet_data/origin_data/datasets/RCTW-17/
+/data/wd_DBnet_data/origin_data/datasets/MTWI/
+/data/wd_DBnet_data/origin_data/datasets/USTB1K/
+Resuming from /data/wd_DBnet_data/recorders/outputs/workspace/mv3_mixup_1500epochs_resume/model/model_epoch_59_minibatch_72000
+Resumed from /data/wd_DBnet_data/recorders/outputs/workspace/mv3_mixup_1500epochs_resume/model/model_epoch_59_minibatch_72000
+verbose: True
+Initializing log dir for /data/wd_DBnet_data/recorders/outputs/workspace/SegDetectorModel-seg_detector/mobilenet_v3_large/L1BalanceCELoss
+/data/wd_DBnet_data/origin_data/datasets/icdar2015/
+/data/wd_DBnet_data/origin_data/datasets/TD_TR/TD500/
+/data/wd_DBnet_data/origin_data/datasets/RCTW-17/
+/data/wd_DBnet_data/origin_data/datasets/MTWI/
+/data/wd_DBnet_data/origin_data/datasets/USTB1K/
+Resuming from /data/wd_DBnet_data/recorders/outputs/workspace/mv3_mixup_1500epochs_resume/model/model_epoch_59_minibatch_72000
+Resumed from /data/wd_DBnet_data/recorders/outputs/workspace/mv3_mixup_1500epochs_resume/model/model_epoch_59_minibatch_72000
+verbose: True
+Initializing log dir for /data/wd_DBnet_data/recorders/outputs/workspace/SegDetectorModel-seg_detector/mobilenet_v3_large/L1BalanceCELoss
+/data/wd_DBnet_data/origin_data/datasets/icdar2015/
+/data/wd_DBnet_data/origin_data/datasets/TD_TR/TD500/
+/data/wd_DBnet_data/origin_data/datasets/RCTW-17/
+/data/wd_DBnet_data/origin_data/datasets/MTWI/
+/data/wd_DBnet_data/origin_data/datasets/USTB1K/
+Resuming from /data/wd_DBnet_data/recorders/outputs/workspace/mv3_mixup_1500epochs_resume/model/model_epoch_59_minibatch_72000
+Resumed from /data/wd_DBnet_data/recorders/outputs/workspace/mv3_mixup_1500epochs_resume/model/model_epoch_59_minibatch_72000

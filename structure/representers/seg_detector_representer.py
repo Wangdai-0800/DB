@@ -3,16 +3,37 @@ import numpy as np
 from shapely.geometry import Polygon
 import pyclipper
 from concern.config import Configurable, State
+from PIL import Image
+import matplotlib.pyplot as plt
+from torchvision import transforms
+import torch
+
+def tensorVisualization(batchTensor, fileName):
+    # Created Locally
+    # Visualization and Save The Tensor
+    batchSize = batchTensor[0]
+    unloader = transforms.ToPILImage()
+    img = batchTensor.cpu().clone()
+    img = img.squeeze(0)
+    img = unloader(img)
+    img = img.convert('RGB')
+    savePath = '/data/wd_DBnet_data/recorders/outputs/interTensor/diy2_withoutOC/'
+    import os
+    if not os.path.exists(savePath):
+        os.mkdir(savePath)
+    img.save(savePath + fileName)
+    # plt.imshow(img)
+    # plt.pause(0.001)
 
 class SegDetectorRepresenter(Configurable):
     thresh = State(default=0.3)
     box_thresh = State(default=0.7)
-    max_candidates = State(default=100)
+    max_candidates = State(default=150)
     dest = State(default='binary')
 
     def __init__(self, cmd={}, **kwargs):
         self.load_all(**kwargs)
-        self.min_size = 3
+        self.min_size = -2
         self.scale_ratio = 0.4
         if 'debug' in cmd:
             self.debug = cmd['debug']
@@ -23,7 +44,7 @@ class SegDetectorRepresenter(Configurable):
         if 'dest' in cmd:
             self.dest = cmd['dest']
 
-    def represent(self, batch, _pred, is_output_polygon=False):
+    def represent(self, batch, _pred, is_output_polygon=False, SAVE_INTERRESULT_FLAG = False, OPEN_CLOSE_FLAG = False):
         '''
         batch: (image, polygons, ignore_tags
         batch: a dict produced by dataloaders.
@@ -36,21 +57,32 @@ class SegDetectorRepresenter(Configurable):
             binary: text region segmentation map, with shape (N, 1, H, W)
             thresh: [if exists] thresh hold prediction with shape (N, 1, H, W)
             thresh_binary: [if exists] binarized with threshhold, (N, 1, H, W)
+        SAVE_INTERRESULT_FLAGE: Using this flag to set if save the intermedia result or not
         '''
         images = batch['image']
+        fileName = batch['filename'][0].split('/')[-1]
+        fileName = fileName.split('.')[0]
         if isinstance(_pred, dict):
             pred = _pred[self.dest]
         else:
             pred = _pred
         segmentation = self.binarize(pred)
+        zone_seg = self.zoneBiSeg(segmentation)
+
+        if SAVE_INTERRESULT_FLAG:
+            tensorVisualization(images, fileName + '_input.jpg')
+            tensorVisualization(pred, fileName + '_pred.jpg')
+            tensorVisualization(zone_seg, fileName + '_seg.jpg')
+
         boxes_batch = []
         scores_batch = []
+
         for batch_index in range(images.size(0)):
             height, width = batch['shape'][batch_index]
             if is_output_polygon:
                 boxes, scores = self.polygons_from_bitmap(
                     pred[batch_index],
-                    segmentation[batch_index], width, height)
+                    segmentation[batch_index], width, height, OPEN_CLOSE_FLAG=OPEN_CLOSE_FLAG)
             else:
                 boxes, scores = self.boxes_from_bitmap(
                     pred[batch_index],
@@ -62,12 +94,24 @@ class SegDetectorRepresenter(Configurable):
     def binarize(self, pred):
         return pred > self.thresh
 
-    def polygons_from_bitmap(self, pred, _bitmap, dest_width, dest_height):
+    def zoneBiSeg(self, segmentation):
+        [N, C, H, W] = segmentation.shape
+        zone_seg = np.zeros([N, C, H, W])
+        for i in range(N):
+            for j in range(C):
+                for m in range(H):
+                    for n in range(W):
+                        if segmentation[i, j, m, n]:
+                            zone_seg[i, j, m, n] = 1
+                        else:
+                            zone_seg[i, j, m, n] = 0
+        return torch.from_numpy(zone_seg)
+
+    def polygons_from_bitmap(self, pred, _bitmap, dest_width, dest_height, OPEN_CLOSE_FLAG = True):
         '''
         _bitmap: single map with shape (1, H, W),
             whose values are binarized as {0, 1}
         '''
-
         assert _bitmap.size(0) == 1
         bitmap = _bitmap.cpu().numpy()[0]  # The first channel
         pred = pred.cpu().detach().numpy()[0]
@@ -75,12 +119,32 @@ class SegDetectorRepresenter(Configurable):
         boxes = []
         scores = []
 
+        # Execute Morphological Transformations
+        # Open First, Then Close
+        if OPEN_CLOSE_FLAG:
+            oc_kernel_size = 6
+            bitmap = (bitmap * 255).astype(np.uint8)
+            bitmap = self.closeEX(self.openEX(bitmap, oc_kernel_size), oc_kernel_size)
+            # bitmap = self.openEX(bitmap, oc_kernel_size)
+            # cv2.imwrite("/home/daiwang/code/DB/demo_result/oc_bitmap.jpg", bitmap)
+            # cv2.imshow('img', bitmap)
+            # cv2.waitKey(0)
+        else:
+            bitmap = (bitmap * 255).astype(np.uint8)
+
         contours, _ = cv2.findContours(
-            (bitmap*255).astype(np.uint8),
+            bitmap,
             cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 
         for contour in contours[:self.max_candidates]:
-            epsilon = 0.01 * cv2.arcLength(contour, True)
+            # For a long text, we maybe need a smaller alpha whose original value = 0.01.
+            # !!!The value of alpha is important for text-OCR
+            # For a long text, the arcLength get longer, so need a smaller alpha
+            # to get a proper epsilon
+            alpha = 0.0001
+            epsilon = alpha * cv2.arcLength(contour, True)
+            if epsilon > 1:
+                print("Epsilon is too large: ", epsilon)
             approx = cv2.approxPolyDP(contour, epsilon, True)
             points = approx.reshape((-1, 2))
             if points.shape[0] < 4:
@@ -97,7 +161,31 @@ class SegDetectorRepresenter(Configurable):
             if points.shape[0] > 2:
                 box = self.unclip(points, unclip_ratio=2.0)
                 if len(box) > 1:
+                    '''
+                    print("跳过1个box, len(box) > 1 :", len(box))
+                    boxNum = box.shape[0]
+                    for boxIndex in range(boxNum):
+                        curBox = box[boxIndex]
+                        if curBox.size == 0:
+                            continue
+                        curBox = curBox.reshape(-1, 2)
+                        _, sside = self.get_mini_boxes(curBox.reshape((-1, 1, 2)))
+                        if sside < self.min_size + 2:
+                            continue
+                        if not isinstance(dest_width, int):
+                            dest_width = dest_width.item()
+                            dest_height = dest_height.item()
+
+                        curBox[:, 0] = np.clip(
+                            np.round(curBox[:, 0] / width * dest_width), 0, dest_width)
+                        curBox[:, 1] = np.clip(
+                            np.round(curBox[:, 1] / height * dest_height), 0, dest_height)
+                        boxes.append(curBox.tolist())
+                        scores.append(score)'''
                     continue
+                else:
+                    pass
+                    # print("Alright")
                 if box.size == 0:
                     """ !!! A BUG HERE !!!"""
                     """Unclip中的ploy生成有问题"""
@@ -170,6 +258,9 @@ class SegDetectorRepresenter(Configurable):
         #Paper Page4 Vatti 1992
         poly = Polygon(box)
         distance = poly.area * unclip_ratio / poly.length
+        if(distance < 1):
+            pass
+            #print("Unclip Ratio < 1")
         offset = pyclipper.PyclipperOffset()
         offset.AddPath(box, pyclipper.JT_ROUND, pyclipper.ET_CLOSEDPOLYGON)
         expanded = np.array(offset.Execute(distance))
@@ -211,3 +302,13 @@ class SegDetectorRepresenter(Configurable):
         box[:, 1] = box[:, 1] - ymin
         cv2.fillPoly(mask, box.reshape(1, -1, 2).astype(np.int32), 1)
         return cv2.mean(bitmap[ymin:ymax+1, xmin:xmax+1], mask)[0]
+
+    def closeEX(self, bitmap, kernel_size = 5):
+        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (kernel_size, kernel_size))
+        bitmap = cv2.morphologyEx(bitmap, cv2.MORPH_CLOSE, kernel)
+        return bitmap
+
+    def openEX(self, bitmap, kernel_size = 5):
+        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (kernel_size, kernel_size))
+        bitmap = cv2.morphologyEx(bitmap, cv2.MORPH_OPEN, kernel)
+        return bitmap

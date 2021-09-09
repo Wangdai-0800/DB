@@ -1,4 +1,7 @@
 #!python3
+import pydevd_pycharm
+pydevd_pycharm.settrace('192.168.2.134', port=10010, stdoutToServer=True, stderrToServer=True)
+
 import argparse
 import os
 import torch
@@ -22,7 +25,8 @@ import time
 
 def main():
     parser = argparse.ArgumentParser(description='Text Recognition Training')
-    parser.add_argument('exp', type=str)
+    parser.add_argument('--exp', type=str)
+    parser.add_argument("--gpu_id", type=str, default='0')
     parser.add_argument('--batch_size', type=int,
                         help='Batch size for training')
     parser.add_argument('--resume', type=str, help='Resume from checkpoint')
@@ -70,6 +74,8 @@ def main():
     args = parser.parse_args()
     args = vars(args)
     args = {k: v for k, v in args.items() if v is not None}
+    os.environ["CUDA_VISIBLE_DEVICES"] = args['gpu_id']
+
 
     conf = Config()
     experiment_args = conf.compile(conf.load(args['exp']))['Experiment']

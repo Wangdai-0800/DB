@@ -3,6 +3,8 @@ from collections import OrderedDict
 import torch
 import torch.nn as nn
 BatchNorm2d = nn.BatchNorm2d
+import sys
+sys.path.append('..')
 
 class SegDetector(nn.Module):
     def __init__(self,
@@ -31,17 +33,21 @@ class SegDetector(nn.Module):
         self.out5 = nn.Sequential(
             nn.Conv2d(inner_channels, inner_channels //
                       4, 3, padding=1, bias=bias),
-            nn.Upsample(scale_factor=8, mode='nearest'))
+            nn.Upsample(scale_factor=8, mode='nearest'),
+            )
         self.out4 = nn.Sequential(
             nn.Conv2d(inner_channels, inner_channels //
                       4, 3, padding=1, bias=bias),
-            nn.Upsample(scale_factor=4, mode='nearest'))
+            nn.Upsample(scale_factor=4, mode='nearest'),
+            )
         self.out3 = nn.Sequential(
             nn.Conv2d(inner_channels, inner_channels //
                       4, 3, padding=1, bias=bias),
-            nn.Upsample(scale_factor=2, mode='nearest'))
-        self.out2 = nn.Conv2d(
-            inner_channels, inner_channels//4, 3, padding=1, bias=bias)
+            nn.Upsample(scale_factor=2, mode='nearest'),
+            )
+        self.out2 = nn.Sequential(
+            nn.Conv2d(inner_channels, inner_channels//4, 3, padding=1, bias=bias),
+            )
 
         self.binarize = nn.Sequential(
             nn.Conv2d(inner_channels, inner_channels //

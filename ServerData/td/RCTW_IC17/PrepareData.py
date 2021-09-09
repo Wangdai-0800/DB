@@ -1,5 +1,5 @@
 #RCTW_IC17 anotation creater
-#Make it identified with ICDAR15
+#Make it identical with ICDAR15
 import glob
 import os
 import random
@@ -24,15 +24,19 @@ for i in range(6):
 allImgs = sum(allImgs, [])
 allGts = sum(allGts, [])
 
+#检校是否匹配，可考虑用排序替换
+for i in range(0, len(allImgs), 10):
+    assert(allImgs[i].split('.')[1] == allGts[i].split('.')[1])
+
 #随机数据，是否需要？
-random.seed(0)
+'''random.seed(0)
 tmpIndex = list(range(len(allImgs)))
 random.shuffle(tmpIndex)
 allImgs = [allImgs[_] for _ in tmpIndex]
-allGts = [allGts[_] for _ in tmpIndex]
+allGts = [allGts[_] for _ in tmpIndex]'''
 
-#6000个作为训练集，其余2034个作为测试集，当前数据不全
-trainSamplesNum = 6000
+#7000个作为训练集，其余1034个作为测试集，当前数据不全
+trainSamplesNum = 7000
 for item in allImgs[0:trainSamplesNum]:
     move(item, trainImgPath)
 for item in allImgs[trainSamplesNum: ]:

@@ -1,7 +1,7 @@
 #!python3
 #Using these code for Pycharm remote debug
-import pydevd_pycharm
-pydevd_pycharm.settrace('192.168.2.134', port=10010, stdoutToServer=True, stderrToServer=True)
+# import pydevd_pycharm
+# pydevd_pycharm.settrace('192.168.2.134', port=10010, stdoutToServer=True, stderrToServer=True)
 
 import argparse
 import os
@@ -11,7 +11,7 @@ import numpy as np
 from experiment import Structure, Experiment
 from concern.config import Configurable, Config
 import math
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
 def main():
     parser = argparse.ArgumentParser(description='Text Recognition Training')
@@ -35,6 +35,8 @@ def main():
                         help='output polygons if true')
     parser.add_argument('--eager', '--eager_show', action='store_true', dest='eager_show',
                         help='Show iamges eagerly')
+    parser.add_argument('--gpu_id', type=int, default=0,
+                        help='The GPU used')
 
     args = parser.parse_args()
     args = vars(args)
@@ -141,7 +143,7 @@ class Demo:
         with torch.no_grad():
             batch['image'] = img
             pred = model.forward(batch, training=False)
-            output = self.structure.representer.represent(batch, pred, is_output_polygon=self.args['polygon']) 
+            output = self.structure.representer.represent(batch, pred, is_output_polygon=self.args['polygon'], SAVE_INTERRESULT_FLAG=True)
             if not os.path.isdir(self.args['result_dir']):
                 os.mkdir(self.args['result_dir'])
             self.format_output(batch, output)

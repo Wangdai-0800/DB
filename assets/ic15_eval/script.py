@@ -217,7 +217,7 @@ def evaluate_method(gtFilePath, submFilePath, evaluationParams):
                         intersected_area = get_intersection(dontCarePol,detPol)
                         pdDimensions = detPol.area()
                         precision = 0 if pdDimensions == 0 else intersected_area / pdDimensions
-                        if (precision > evaluationParams['AREA_PRECISION_CONSTRAINT'] ):
+                        if (precision > evaluationParams['AREA_PRECISION_CONSTRAINT']):
                             detDontCarePolsNum.append( len(detPols)-1 )
                             break
                                 

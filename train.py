@@ -5,8 +5,6 @@
 import argparse
 import time
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-
 import torch
 import yaml
 
@@ -24,6 +22,7 @@ from concern.config import Configurable, Config
 
 def main():
     parser = argparse.ArgumentParser(description='Text Recognition Training')
+    parser.add_argument('--gpu_id', type=int, default=0)
     parser.add_argument('--exp', type=str)
     parser.add_argument('--name', type=str)
     parser.add_argument('--batch_size', type=int, help='Batch size for training')
@@ -57,6 +56,8 @@ def main():
     args = vars(args)
     args = {k: v for k, v in args.items() if v is not None}
 
+    #os.environ["CUDA_VISIBLE_DEVICES"] = str(args['gpu_id'])
+    os.environ["CUDA_VISIBLE_DEVICES"] = '0,1'
     if args['distributed']:
         torch.cuda.set_device(args['local_rank'])
         torch.distributed.init_process_group(backend='nccl', init_method='env://')
