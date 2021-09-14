@@ -1,4 +1,34 @@
+##  Local Info
+
+​      DBnet-pytorch的本地部署，根据公司业务数据优化算法。
+
+___操作：___
+
+1. 用mobilenet-v3代替resnet18作为backbone。结论 ：mv3net构建网络更轻量，可取得与resnet backbone网络接近性能，但在训练中收敛不平滑，波动大。
+2. 在DBnet后处理部分加入SEnet(Squeeze-and-Excitation Networks)插块，小样本数据验证性能有略微提升。
+3. 根据公司业务数据，调优算法后处理部分。调整参数修正细长文本检测；对mask引入可选形态学操作，解决文字检测粘连。
+
+___结果:___
+
+1. 在Precision、Recall和F-measures指标下，现有模型可接近百度ppOCR mobile模型的性能。在公司本地业务数据集上测试结果如下：
+
+| Method      | Precision | Recall   | H-means  |
+| ----------- | --------- | -------- | -------- |
+| local DBnet | 0.69      | **0.48** | **0.57** |
+| ppOCR       | **0.75**  | 0.43     | 0.55     |
+
++ 上述结果测试时使用的True Label为自动标注，非Ground Truth。
+
+2. 调试tips:
+   * 输入图像为竖直正向时，利于模型识别文字。测试来看，模型倾向于识别水平横排文本，对竖长文本检测略差。
+   * 根据输入图像大小选择相应的缩放比例，避免损失细微文字。
+   * 需要预训练模型，本地预训练模型使用公开数据集。
+
+___补充:___
+1. 辅助代码。ppOCR以百度PaddlePaddle OCR构造baseline；PSEnet自动标注；onlineDetect做公司线上测试。
+
 ## News
+
 * DB is included in [WeChat OCR engine](https://mp.weixin.qq.com/s/6IGXof3KWVnN8z1i2YOqJA)
 * DB is included in [OpenCV](https://github.com/opencv/opencv/blob/master/doc/tutorials/dnn/dnn_text_spotting/dnn_text_spotting.markdown)
 * DB is included in [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR)
@@ -179,5 +209,5 @@ Please cite the related works in your publications if it helps your research:
 
 Test git.
 
-    
+​    
 
